@@ -3,6 +3,7 @@ const TOTAL_POINTS = 20;
 let assignmentStartTime = Date.now();
 let focusLossCount = 0, copyPasteCount = 0, fullscreenExitCount = 0;
 let securityEvents = [], lastBlurAt = 0, currentQuestionPage = 0, questionElements = [];
+const hebrewLetters = ["א", "ב", "ג", "ד", "ה", "ו", "ז", "ח", "ט", "י"];
 const questions = [
   {
     "id": "q1",
