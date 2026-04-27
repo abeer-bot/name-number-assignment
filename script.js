@@ -222,7 +222,7 @@ function renderQuestions() {
     if (q.type === "multi") {
       html += `<div class="multi-items">`;
       q.items.forEach((item, itemIdx) => {
-        html += `<div class="multi-item"><p><strong>${itemIdx + 1}.</strong> ${item.prompt}</p><div class="options compact">`;
+        html += `<div class="multi-item"><p><strong>${hebrewLetters[itemIdx]}.</strong> ${item.prompt}</p><div class="options compact">`;
         item.options.forEach((option, optionIdx) => html += `<label><input type="radio" name="${q.id}_${itemIdx}" value="${optionIdx}" /> <span>${option}</span></label>`);
         html += `</div></div>`;
       });
