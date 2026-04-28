@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>בוחן שם המספר - כיתה י</title>
+  <style>
+    :root{--bg:#f7f7fb;--card:#fff;--text:#111827;--muted:#6b7280;--primary:#2563eb;--primary2:#1d4ed8;--border:#d1d5db;--soft:#eff6ff;--ok:#16a34a;--bad:#dc2626;--warn:#f59e0b;}
+    *{box-sizing:border-box} body{margin:0;font-family:Arial,"Noto Sans Hebrew",sans-serif;background:var(--bg);color:var(--text);line-height:1.65}
+    header{background:linear-gradient(135deg,#1e3a8a,#3b82f6);color:#fff;text-align:center;padding:30px 16px} header h1{margin:0;font-size:clamp(24px,4vw,38px)} header p{margin:8px 0 0;opacity:.96}
+    main{max-width:1050px;margin:24px auto;padding:0 14px 60px}.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 8px 25px rgba(0,0,0,.06)}
+    h2{margin:0 0 14px;color:#111827}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}@media(max-width:750px){.grid{grid-template-columns:1fr}}
+    label{font-weight:700;display:block;margin-bottom:6px}input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:12px;font-size:16px;background:#fff}textarea{min-height:100px;resize:vertical}.note{color:var(--muted);font-size:14px}.pill{display:inline-block;padding:4px 10px;border-radius:999px;background:var(--soft);color:#1d4ed8;font-weight:700;font-size:14px}
+    .q{padding:16px;border:1px solid #e5e7eb;border-radius:16px;margin:14px 0;background:#fafafa}.q-title{font-weight:700;margin-bottom:10px;font-size:17px}.qnum{display:inline-block;background:#dbeafe;color:#1e3a8a;border-radius:999px;padding:2px 10px;margin-left:8px;font-weight:800}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}@media(max-width:700px){.choices{grid-template-columns:1fr}}
+    .choice{border:1px solid #e5e7eb;border-radius:12px;padding:10px;background:#fff;cursor:pointer;display:flex;gap:8px;align-items:flex-start;font-weight:400}.choice:hover{border-color:#93c5fd;background:#f8fbff}.choice input{width:auto;margin-top:5px}.letter{font-weight:800;color:#1d4ed8;min-width:20px}.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}button{border:0;border-radius:12px;padding:12px 18px;font-size:16px;font-weight:800;cursor:pointer;background:var(--primary);color:white}button:hover{background:var(--primary2)}button.secondary{background:#374151}button.secondary:hover{background:#111827}.result{font-size:20px;font-weight:800}.ok{color:var(--ok)}.bad{color:var(--bad)}.hidden{display:none}.ltr{direction:ltr;text-align:left}footer{text-align:center;color:var(--muted);font-size:13px;margin-top:22px}.small{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<header>
+  <h1>בוחן בנושא שם המספר</h1>
+  <p>כיתה י׳ — שם המספר בצורה הנכונה</p>
+</header>
+<main>
+  <section class="card" id="studentCard">
+    <h2>פרטי תלמיד/ה</h2>
+    <div class="grid">
+      <div><label for="studentName">שם תלמיד/ה</label><input id="studentName" autocomplete="name" placeholder="הקלידו שם מלא"></div>
+      <div><label for="studentNumber">מספר תלמיד/ה</label><input id="studentNumber" placeholder="מספר / תעודת זהות / מספר סידורי"></div>
+      <div><label for="className">כיתה</label><input id="className" placeholder="למשל: י1"></div>
+      <div><label for="teacherName">שם המורה</label><input id="teacherName" placeholder="שם המורה"></div>
+    </div>
+    <p class="note">ענו על כל השאלות. בכל סעיף יש לבחור תשובה אחת בלבד.</p>
+  </section>
+
+  <form id="examForm" class="card">
+    <h2>שאלה 1 — בחרו את שם המספר בצורה הנכונה <span class="pill">10 נקודות</span></h2>
+    <p class="note">בכל סעיף בחרו אפשרות אחת מתוך ארבע אפשרויות.</p>
+    <div id="part1"></div>
+
+    <h2>שאלה 2 — בחרו בשם המספר הנכון לפי שם העצם <span class="pill">5 נקודות</span></h2>
+    <p class="note">בכל סעיף בחרו אפשרות אחת מתוך ארבע אפשרויות.</p>
+    <div id="part2"></div>
+
+    <h2>שאלה 3 — בחרו באפשרות הנכונה במשפט <span class="pill">5 נקודות</span></h2>
+    <p class="note">בכל סעיף בחרו אפשרות אחת מתוך ארבע אפשרויות.</p>
+    <div id="part3"></div>
+
+    <div class="btns">
+      <button type="button" onclick="gradeExam()">בדיקת ציון</button>
+      <button type="button" class="secondary" onclick="downloadSubmission()">הורדת קובץ תשובות</button>
+      <button type="button" class="secondary" onclick="submitToTeacher()">שליחה למורה</button>
+    </div>
+    <p id="result" class="result"></p>
+  </form>
+
+  <section class="card hidden" id="teacherPanel">
+    <h2>נתוני הגשה</h2>
+    <textarea id="jsonOutput" class="ltr" readonly></textarea>
+  </section>
+  <footer>קובץ HTML עצמאי לתרגול ובדיקה מקומית</footer>
+</main>
+<script>
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxpBPZtHmmToXmuRmYJqakYHKNR-SjN2bQsFn3DvGnxAsFZjjfHVpyHoxOK8xqy42WEqw/exec";
+const letters = ['א','ב','ג','ד'];
+
+const part1Questions = [
+  {text:'14 תלמיד', correct:'ארבעה עשר תלמידים', choices:['ארבעה עשר תלמידים','ארבע עשרה תלמידים','ארבעה עשרה תלמידים','ארבע עשר תלמידים']},
+  {text:'22 מחברת', correct:'עשרים ושתיים מחברות', choices:['עשרים ושתיים מחברות','עשרים ושניים מחברות','עשרים ושתיים מחברת','עשרים ושנים מחברות']},
+  {text:'8 ספר', correct:'שמונה ספרים', choices:['שמונה ספרים','שמונה ספרות','שמונת ספרים','שמונה ספר']},
+  {text:'31 שנה', correct:'שלושים ואחת שנים', choices:['שלושים ואחת שנים','שלושים ואחד שנים','שלושים ואחת שנה','שלושים ואחד שנה']},
+  {text:'7 כיסא', correct:'שבעה כיסאות', choices:['שבעה כיסאות','שבע כיסאות','שבעה כיסא','שבע כיסא']},
+  {text:'19 ביצה', correct:'תשע עשרה ביצים', choices:['תשע עשרה ביצים','תשעה עשר ביצים','תשע עשר ביצים','תשעה עשרה ביצים']},
+  {text:'40 שקל', correct:'ארבעים שקלים', choices:['ארבעים שקלים','ארבעים שקלות','ארבעה עשר שקלים','ארבעים שקל']},
+  {text:'53 אישה', correct:'חמישים ושלוש נשים', choices:['חמישים ושלוש נשים','חמישים ושלושה נשים','חמישים ושלוש אישה','חמישים ושלושה אישה']},
+  {text:'11 יום', correct:'אחד עשר ימים', choices:['אחד עשר ימים','אחת עשרה ימים','אחד עשרה ימים','אחת עשר ימים']},
+  {text:'68 דקה', correct:'שישים ושמונה דקות', choices:['שישים ושמונה דקות','שישים ושמונה דקים','שישים ושמונה דקה','שישים ושמונת דקות']},
+  {text:'10 הבנים', correct:'עשרת הבנים', choices:['עשרת הבנים','עשרה הבנים','עשר הבנים','עשרת בן']}
+];
+
+const part2Questions = [
+  {text:'4 חדרים', correct:'ארבעה חדרים', choices:['ארבעה חדרים','ארבע חדרים','ארבעה חדרות','ארבעת חדרים']},
+  {text:'12 תמונות', correct:'שתים עשרה תמונות', choices:['שתים עשרה תמונות','שנים עשר תמונות','שתים עשר תמונות','שני עשר תמונות']},
+  {text:'21 ילדים', correct:'עשרים ואחד ילדים', choices:['עשרים ואחד ילדים','עשרים ואחת ילדים','עשרים ואחד ילד','עשרים ואחת ילד']},
+  {text:'9 מכוניות', correct:'תשע מכוניות', choices:['תשע מכוניות','תשעה מכוניות','תשעת מכוניות','תשע מכונית']},
+  {text:'15 עצים', correct:'חמישה עשר עצים', choices:['חמישה עשר עצים','חמש עשרה עצים','חמישה עשרה עצים','חמש עשר עצים']}
+];
+
+const part3Questions = [
+  {text:'בכיתה לומדים (32) תלמידים.', correct:'שלושים ושניים', choices:['שלושים ושניים','שלושים ושתיים','שלושים ושנים','שלושים ושתים']},
+  {text:'בספרייה יש (8) שולחנות.', correct:'שמונה', choices:['שמונה','שמונָה','שמונת','שמונה שולחנותים']},
+  {text:'קניתי בחנות (3) מחברות.', correct:'שלוש', choices:['שלוש','שלושה','שלושת','שלושות']},
+  {text:'בטיול השתתפו (17) בנות.', correct:'שבע עשרה', choices:['שבע עשרה','שבעה עשר','שבעה עשרה','שבע עשר']},
+  {text:'קראתי בספר (25) עמודים.', correct:'עשרים וחמישה', choices:['עשרים וחמישה','עשרים וחמש','עשרים וחמישת','עשרים וחמשה']}
+];
+
+function shuffle(a){return a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);}
+function renderQuestion(container, prefix, q, index){
+  const choices = shuffle([...q.choices]);
+  const html = `<div class="q"><div class="q-title"><span class="qnum">${index+1}</span>${q.text}</div><div class="choices">${choices.map((c,j)=>`<label class="choice"><input type="radio" name="${prefix}_${index}" value="${escapeHtml(c)}"><span class="letter">${letters[j]}.</span><span>${c}</span></label>`).join('')}</div></div>`;
+  container.insertAdjacentHTML('beforeend', html);
+}
+function escapeHtml(s){return String(s).replaceAll('&','&amp;').replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;');}
+function render(){
+  const p1=document.getElementById('part1'); part1Questions.forEach((q,i)=>renderQuestion(p1,'p1',q,i));
+  const p2=document.getElementById('part2'); part2Questions.forEach((q,i)=>renderQuestion(p2,'p2',q,i));
+  const p3=document.getElementById('part3'); part3Questions.forEach((q,i)=>renderQuestion(p3,'p3',q,i));
+}
+function getRadio(name){const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:'';}
+function collect(){
+  const answers={part1:{},part2:{},part3:{}};
+  part1Questions.forEach((q,i)=>answers.part1[i+1]=getRadio(`p1_${i}`));
+  part2Questions.forEach((q,i)=>answers.part2[i+1]=getRadio(`p2_${i}`));
+  part3Questions.forEach((q,i)=>answers.part3[i+1]=getRadio(`p3_${i}`));
+  const meta={
+    studentName:document.getElementById('studentName').value.trim(),
+    studentNumber:document.getElementById('studentNumber').value.trim(),
+    className:document.getElementById('className').value.trim(),
+    teacherName:document.getElementById('teacherName').value.trim(),
+    examTitle:'בוחן בנושא שם המספר',
+    submittedAt:new Date().toISOString()
+  };
+  return {meta, studentName:meta.studentName, studentId:meta.studentNumber, className:meta.className, teacherName:meta.teacherName, examCode:'name-number-assignment', answers, autoScore:calculateScore().score, notes:''};
+}
+function calculateScore(){
+  let score=0,total=0;
+  part1Questions.forEach((q,i)=>{total+=10/part1Questions.length; if(getRadio(`p1_${i}`)===q.correct) score+=10/part1Questions.length;});
+  part2Questions.forEach((q,i)=>{total+=1; if(getRadio(`p2_${i}`)===q.correct) score+=1;});
+  part3Questions.forEach((q,i)=>{total+=1; if(getRadio(`p3_${i}`)===q.correct) score+=1;});
+  return {score:Math.round(score*100)/100,total:20};
+}
+function gradeExam(){
+  const r=calculateScore();
+  const pct=Math.round((r.score/r.total)*100);
+  document.getElementById('result').innerHTML=`ציון: <span class="${pct>=60?'ok':'bad'}">${r.score} / ${r.total}</span> (${pct}%)`;
+  showJson();
+}
+function showJson(){
+  const data=collect();
+  document.getElementById('teacherPanel').classList.remove('hidden');
+  document.getElementById('jsonOutput').value=JSON.stringify(data,null,2);
+}
+function downloadSubmission(){
+  const data=collect();
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json;charset=utf-8'});
+  const a=document.createElement('a');
+  const safe=(data.meta.studentName||'student').replace(/[\\/:*?"<>|]/g,'_');
+  a.href=URL.createObjectURL(blob); a.download=`submission_${safe}_${Date.now()}.json`; a.click(); URL.revokeObjectURL(a.href);
+}
+async function submitToTeacher(){
+  const data=collect();
+  if(!data.meta.studentName){alert('נא למלא שם תלמיד/ה לפני השליחה.');return;}
+  if(!GOOGLE_SCRIPT_URL){alert('לא הוגדר קישור שליחה למורה.');return;}
+  try{
+    await fetch(GOOGLE_SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(data)});
+    alert('הבחינה נשלחה למורה בהצלחה.');
+  }catch(err){
+    alert('אירעה שגיאה בשליחה. מומלץ להוריד קובץ תשובות ולשלוח למורה.');
+  }
+}
+render();
+</script>
+</body>
+</html>
